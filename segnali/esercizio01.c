@@ -4,8 +4,11 @@
 // esegui il file a.out
 // apri un nuovo terminale
 // esegui il comando ps -xa 
-// prendi il codice dell'eseguibile
-// manda kill -INT codice
+// prendi il pid del processo in esecuzione
+// manda uno dei seguenti segnali
+// kill -INT pid
+// kill SIGUSR1 pid
+// kill SIGUSR2 pid
 
 /**
  * 1. Scrivere un programma che intercetta CTRL-c ed invece di terminare scrive su stdout “non voglio terminare”
@@ -20,21 +23,27 @@ int segnale;
 static void gestore( int signo );
  
 int main() {
-	int a = 20, b = 10;
+	int a = 0, b = 0;
+
+    printf( "Inserisci un numero intero A: " );
+    scanf( "%d", &a );
+
+    printf( "Inserisci un numero intero B: " );
+    scanf( "%d", &b );
 
     // aggancio i rispettivi segnali effettuando
     // un controllo del successo di cattura del segnale
 	if ( signal( SIGINT, gestore ) == SIG_ERR )	
-		printf( "\nNon sono riuscito a catturare il segnale!" );
+		printf( "\n Non sono riuscito a catturare il segnale!" );
 	else if ( signal( SIGUSR1, gestore ) == SIG_ERR )	
-		printf( "\nNon sono riuscito a catturare il segnale!" );
+		printf( "\n Non sono riuscito a catturare il segnale!" );
 	else if ( signal( SIGUSR2, gestore ) == SIG_ERR )	
-		printf( "\nNon sono riuscito a catturare il segnale!" );
+		printf( "\n Non sono riuscito a catturare il segnale!" );
 
 	do {
 		pause();
 		if ( segnale == SIGINT )
-			printf("\n Non voglio terminare! ");
+			printf( "\n Non voglio terminare! ");
 		else if ( segnale == SIGUSR1 )
 			printf( "\n Somma: %d", a + b );
 		else if ( segnale == SIGUSR2 )
