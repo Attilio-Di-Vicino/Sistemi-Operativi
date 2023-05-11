@@ -2,10 +2,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+// direttive del processore
 #define READ 0
 #define WRITE 1
-
-int risultato;
 
 int main() {
 
@@ -14,17 +13,22 @@ int main() {
     int pfdPadreDispari[2];
     int pfdPariPadre[2];
     int pfdDispariPadre[2];
+    int pfdfigloAB[2];
     int pidA = 10;
     int pidB = 10;
     int numero = 0;
-    // risultato = malloc( sizeof( int ) );
-    risultato = 0;
+    int risultato = 0;
 
     // creo le pipe anonime senza effettuare controlli
     pipe( pfdPadrePari );
     pipe( pfdPadreDispari );
     pipe( pfdPariPadre );
-    pipe( pfdDispariPadre );
+
+    // eseguo un controlli solo come esempio
+    if ( pipe( pfdDispariPadre ) == -1 ) {
+        perror( "\npipe" );
+        exit( EXIT_FAILURE );
+    }
 
     // creo i due figli
     if ( !( pidA = fork() ) ) {
@@ -58,6 +62,8 @@ int main() {
 
             // leggo da mio padre
             read( pfdPadrePari[ READ ], &numero, sizeof( int ) );
+            read( pfdPadrePari[ READ ], &risultato, sizeof( int ) );
+
             // calcolo il risultato
             risultato += numero;
 
@@ -68,6 +74,7 @@ int main() {
 
         close( pfdPadrePari[ READ ] );
         close( pfdPariPadre[ WRITE ] );
+        exit( EXIT_SUCCESS );
 
     } else if ( pidB == 3 ) { // figlio dispari
 
@@ -86,6 +93,7 @@ int main() {
 
             // leggo da mio padre
             read( pfdPadreDispari[ READ ], &numero, sizeof( int ) );
+            read( pfdPadreDispari[ READ ], &risultato, sizeof( int ) );
 
             // calcolo il risultato
             risultato += numero;
@@ -97,6 +105,7 @@ int main() {
 
         close( pfdPadreDispari[ READ ] );
         close( pfdDispariPadre[ WRITE ] );
+        exit( EXIT_SUCCESS );
 
     } else { // padre
 
@@ -120,6 +129,7 @@ int main() {
                 
                 // scrivo a mio figlio pari
                 write( pfdPadrePari[ WRITE ], &numero, sizeof( int ) );
+                write( pfdPadrePari[ WRITE ], &risultato, sizeof( int ) );
 
                 // non chiudo la comunicazione
 
@@ -132,6 +142,7 @@ int main() {
                 
                 // scrivo a mio figlio dispari
                 write( pfdPadreDispari[ WRITE ], &numero, sizeof( int ) );
+                write( pfdPadreDispari[ WRITE ], &risultato, sizeof( int ) );
 
                 // non chiudo la comunicazione
 
@@ -149,9 +160,10 @@ int main() {
         close( pfdPadrePari[ WRITE ] );
         close( pfdDispariPadre[ READ ] );
         close( pfdPadreDispari[ WRITE ] ); 
-    }
 
-    printf( "\n" );
+        printf( "\nPadre Termino!\n" );
+        exit( EXIT_SUCCESS );
+    }
 
     return 0;
 }
