@@ -2,6 +2,7 @@
  * Scrivere un programma che esegua il comando di shell 
  * “ls | sort| grep <path>” con tre processi distinti
 */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -92,7 +93,6 @@ int main( int argc, char** argv ) {
             execlp( "grep", "grep", argv[1], NULL );
         }
     }
-
-
+    
     return 0;
 }
