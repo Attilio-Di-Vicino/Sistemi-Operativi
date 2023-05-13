@@ -1,4 +1,4 @@
-#include "../Apue/apue.h"
+#include "../apue/apue.h"
 
 // compila il file gcc
 // esegui il file a.out

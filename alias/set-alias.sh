@@ -1,4 +1,3 @@
-# chmod +x set-alias.sh
 #!/bin/bash
 
 # ls..
