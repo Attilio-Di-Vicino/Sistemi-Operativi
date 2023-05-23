@@ -20,5 +20,6 @@ echo 'alias aggiorn-tutt-cos="sudo apt dist-upgrade"' >> ~/.bashrc
 echo 'alias cancell="sudo apt autoremove"' >> ~/.bashrc
 echo 'alias pulezz="sudo apt-get clean"' >> ~/.bashrc
 echo 'alias pulezz-tutt-cos="sudo apt-get autoclean"' >> ~/.bashrc
+echo 'alias viratell-tu="sudo apt update && sudo apt upgrade && sudo apt dist-upgrade && sudo apt autoremove && sudo apt-get clean && sudo apt-get autoclean"' >> ~/.bashrc
 
 source ~/.bashrc
