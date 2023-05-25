@@ -2,6 +2,21 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/**
+ * • Scrivere un programma che gestisce 
+ * il comportamento di un padre e due figli (fpari e fdispari);
+ * 
+ * il padre legge numeri positivi da tastiera fino a che non arriva un numero negativo 
+ *      
+ *      • se il numero è pari lo manda al figlio pari 
+ *      
+ *      • altrimenti lo manda al figlio dispari 
+ *      
+ *      • I figli effettuano le somme parziali, quindi
+ *        rimandano le somme al padre che calcola la 
+ *        somma totale e la stampa a video
+*/
+
 // direttive del processore
 #define READ 0
 #define WRITE 1
