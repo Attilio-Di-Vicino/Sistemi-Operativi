@@ -50,7 +50,7 @@ Per utilizzare il repository, segui i seguenti passaggi:
 1. Clona il repository sul tuo sistema locale:
 
 ```
-git clone <link_del_repository>
+git clone https://github.com/Attilio-Di-Vicino/Sistemi-Operativi.git
 ```
 
 2. Esplora le diverse cartelle e i file relativi agli argomenti che desideri approfondire.
