@@ -2,42 +2,6 @@
 
 Questo è un esempio di un'applicazione client-server in cui i client inviano dati al server tramite una pipe FIFO e ricevono una risposta.
 
-## Compilazione
-
-Per compilare il programma, utilizza un compilatore C compatibile (ad esempio, GCC) con il seguente comando:
-
-```
-gcc -o client client.c
-gcc -o server server.c
-```
-
-Questo genererà un file eseguibile chiamato `client` e `server`.
-
-## Esecuzione
-
-Per avviare l'applicazione, segui i passaggi seguenti:
-
-1. Avvia il server in background:
-
-```
-$ ./server &
-```
-
-2. Avvia i client desiderati. Puoi avviarne più di uno in contemporanea:
-
-```
-$ ./client &
-$ ./client &
-```
-
-    oppure
-
-```
-$ for i in 1 2 3 4 5; do ./client & done
-```
-
-3. I client invieranno dati al server e riceveranno una risposta. I risultati verranno visualizzati sullo schermo.
-
 ## Descrizione del Codice server
 
 Il codice sorgente `server.c` è costituito da diverse fasi:
@@ -76,6 +40,42 @@ Il codice sorgente `client.c` è costituito da due parti principali:
 - Viene aperta la pipe FIFO del client in modalità di lettura.
 - Se la pipe FIFO viene aperta con successo, viene letto il messaggio inviato dal server.
 - La pipe FIFO del client viene quindi chiusa e rimossa dalla memoria.
+
+## Compilazione
+
+Per compilare il programma, utilizza un compilatore C compatibile (ad esempio, GCC) con il seguente comando:
+
+```
+gcc -o client client.c
+gcc -o server server.c
+```
+
+Questo genererà un file eseguibile chiamato `client` e `server`.
+
+## Esecuzione
+
+Per avviare l'applicazione, segui i passaggi seguenti:
+
+1. Avvia il server in background:
+
+```
+$ ./server &
+```
+
+2. Avvia i client desiderati. Puoi avviarne più di uno in contemporanea:
+
+```
+$ ./client &
+$ ./client &
+```
+
+oppure
+
+```
+$ for i in 1 2 3 4 5; do ./client & done
+```
+
+3. I client invieranno dati al server e riceveranno una risposta. I risultati verranno visualizzati sullo schermo.
 
 ## Esempio di Esecuzione
 
