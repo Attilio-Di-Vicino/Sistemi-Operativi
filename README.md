@@ -1,55 +1,43 @@
 # Sistemi-Operativi
 
-Questo repository è dedicato al corso di Sistemi Operativi nell'ambito dell'esame di Informatica. Il repository fornisce una panoramica completa degli argomenti relativi ai sistemi operativi basati su Unix, fornendo una solida base di conoscenze e competenze.
+Questo repository è dedicato al corso di Sistemi Operativi - Parte Laboratorio nell'ambito dell'esame di Informatica.
 
 ## Contenuti
 
 Il repository include i seguenti argomenti principali:
 
-### 1. C-Tools
-
-- Introduzione agli strumenti di sviluppo in linguaggio C per l'ambiente Unix.
-- Utilizzo di librerie standard come `<stdio.h>`, `<stdlib.h>`, `<string.h>`, ecc.
-- Concetti di compilazione e linking.
-
-### 2. Introduzione alla Shell
-
-- Descrizione delle funzionalità della shell di Unix e dei suoi comandi di base.
-- Utilizzo di comandi di navigazione nel file system, gestione dei file e delle directory.
-- Esecuzione di programmi esterni e gestione dei processi.
-
-### 3. File I/O
+### 1. File I/O
 
 - Operazioni di input/output sui file in ambiente Unix.
 - Apertura, lettura, scrittura e chiusura dei file utilizzando le chiamate di sistema appropriate.
 - Gestione degli errori durante le operazioni di I/O.
 
-### 4. File e Directory
+### 2. File e Directory
 
 - Concetti fondamentali dei file e delle directory in Unix.
 - Manipolazione dei file e delle directory utilizzando le chiamate di sistema appropriate.
 - Creazione, eliminazione, spostamento e rinomina di file e directory.
 
-### 5. Processi
+### 3. Processi
 
 - Concetti di base sui processi in ambiente Unix.
 - Creazione, terminazione e gestione dei processi.
 - Comunicazione e sincronizzazione tra processi utilizzando pipe anonime e FIFO.
 - Utilizzo dei segnali per la gestione degli eventi e delle interruzioni.
 
-### 6. Socket IPC
+### 4. IPC Socket
 
 - Introduzione alla comunicazione tra processi utilizzando socket IPC (Inter-Process Communication).
 - Creazione, connessione, invio e ricezione di dati attraverso socket.
 - Comunicazione tra processi locali o remoti tramite socket.
 
-### 7. Thread
+### 5. Thread
 
 - Concetti di base sui thread e sulla programmazione multithread.
 - Creazione, terminazione e gestione dei thread.
 - Sincronizzazione dei thread utilizzando mutex, variabili di condizione e semafori.
 
-### 8. Shell Scripting
+### 6. Shell Scripting
 
 - Introduzione alla creazione di script di shell per l'automazione di compiti comuni.
 - Utilizzo di variabili, comandi di controllo di flusso, cicli e funzioni di shell.
