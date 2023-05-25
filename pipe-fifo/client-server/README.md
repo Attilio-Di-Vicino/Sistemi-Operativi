@@ -28,14 +28,12 @@ $ ./server &
 ```
 $ ./client &
 $ ./client &
-...
 ```
 
-oppure
+    oppure
 
 ```
 $ for i in 1 2 3 4 5; do ./client & done
-...
 ```
 
 3. I client invieranno dati al server e riceveranno una risposta. I risultati verranno visualizzati sullo schermo.
