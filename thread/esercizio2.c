@@ -45,8 +45,6 @@ void* routine( void* argv ) {
 
     // Come prima cosa biogna eseguire il cast da void* alla struttura
     struct parameter* parameters = ( struct parameter* ) argv;
-    
-    printf( "\nSono il Thread: %d Il mio desc è: %d", parameters->tid, parameters->pFile );
 
     // Posiziono il descrittore nella posizione di inzio lettura
     fseek( parameters->file, parameters->pFile, SEEK_SET );
@@ -160,6 +158,7 @@ int main() {
 
         if ( pthread_create( &th[i], NULL, routine, ( void* ) parameters ) != 0 ) {
             perror( "Errore nella creazione dei Thread" );
+            fclose( file );
             exit( EXIT_FAILURE );
         }
     }
@@ -176,7 +175,9 @@ int main() {
         totCount += ( int ) count;
     }
 
+    fclose( file );
+
     printf( "\nTutti i Thread sono terminati" );
-    printf( "\nIl carattere %c è presente nel file %s: %d volte\n", x, fileName, totCount );
+    printf( "\nIl carattere '%c' è presente nel file %s: %d volte\n", x, fileName, totCount );
     exit( EXIT_SUCCESS );
 }
