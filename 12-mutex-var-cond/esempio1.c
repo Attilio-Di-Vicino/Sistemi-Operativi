@@ -45,6 +45,7 @@ int main( void ) {
         exit(2);
     }
 
+    // A questo punto ci aspettimao che stampi: 40
     printf( "\nmyglobal e’ uguale a %d\n", myglobal );
     exit( EXIT_SUCCESS );
 }
