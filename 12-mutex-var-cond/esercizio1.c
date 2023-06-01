@@ -63,29 +63,49 @@ void deAllocationMatrix() {
     free( matrix );
 }
 
+/**
+ * routine dei Thread
+ * 
+ * @param argv struttura passata al Thread
+*/
 void* routine( void* argv ) {
 
     pthread_t* myTid = ( pthread_t* ) argv;
     printf( "\nMy Tid è: %ld", *myTid );
 
+    // Inizio la mia ricerca
     for ( int j = 0; j < sizeMatrix; j++ ) {
 
+        // Se l'elemento non è stato ancora trovato
         pthread_mutex_lock( &mutex );
         if ( find == FALSE ) {
             pthread_mutex_unlock( &mutex );
 
+            // Se ho trovato l'elemento
             if ( matrix[ *myTid ][j] == findNumber ) {
 
+                // Imposto la flag dell'elemento trovato
                 pthread_mutex_lock( &mutex );
                 find = TRUE;
                 pthread_mutex_unlock( &mutex );
 
+                /**
+                 * Prima di cancellare tutti i thread
+                 * è necessario aspettare che tutti vengano creati
+                 * in modo tale da non accedere a memorie inesistenti
+                 * e quindi di generare un segmentation fault
+                 * 
+                 * Utilizzo una variabile condizione in modo da evitare 
+                 * l'utilizzo della tecnica Polling
+                */
                 while ( created == FALSE )
                     pthread_cond_wait( &cond, &mutex );
 
+                // Salvo i punti
                 row = *myTid;
                 col = j;
 
+                // Cancello tutti i Thread
                 for ( int i = 0; i < sizeMatrix; i++ ) {
                     if ( i != *myTid ) {
                         if ( pthread_cancel( th[i] ) == 0 )
@@ -140,7 +160,8 @@ int main( int argc, char* argv[] ) {
     printf( "\nTutti i Thread sono stati creati." );
     pthread_mutex_lock( &mutex );
     created = TRUE;
-    pthread_cond_broadcast( &cond );
+    // Avviso il Thread che sta aspettando che può proseguire
+    pthread_cond_signal( &cond );
     pthread_mutex_unlock( &mutex );
 
     // Attesa Thread
