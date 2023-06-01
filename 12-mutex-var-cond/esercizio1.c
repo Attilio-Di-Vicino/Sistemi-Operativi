@@ -18,14 +18,23 @@
 #include <pthread.h>
 #include <time.h>
 
+#define TRUE 0
+#define FALSE 1
+
 // Variabili globali
 int** matrix;
 int sizeMatrix;
 int findNumber;
 int row = - 1, col = - 1;
+int created = FALSE;
+int find = FALSE;
 
-// Mutex
+// Mutex e variabile condizione
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
+// Thread
+pthread_t* th;
 
 void initMatrix() {
     for ( int i = 0; i < sizeMatrix; i++ )
@@ -55,23 +64,43 @@ void deAllocationMatrix() {
 }
 
 void* routine( void* argv ) {
+
     pthread_t* myTid = ( pthread_t* ) argv;
-    printf( "\nMy Tid is: %ld", *myTid );
+    printf( "\nMy Tid è: %ld", *myTid );
 
     for ( int j = 0; j < sizeMatrix; j++ ) {
-        if ( matrix[ *myTid ][j] ==  findNumber ) {
-            pthread_mutex_lock( &mutex );
-            row = *myTid;
-            col = j;
+
+        pthread_mutex_lock( &mutex );
+        if ( find == FALSE ) {
             pthread_mutex_unlock( &mutex );
 
-            for ( int i = 0; i < sizeMatrix; i++ ) {
-                if ( i != *myTid ) {
-                    // pthread_cancel( i );
+            if ( matrix[ *myTid ][j] == findNumber ) {
+
+                pthread_mutex_lock( &mutex );
+                find = TRUE;
+                pthread_mutex_unlock( &mutex );
+
+                while ( created == FALSE )
+                    pthread_cond_wait( &cond, &mutex );
+
+                row = *myTid;
+                col = j;
+
+                for ( int i = 0; i < sizeMatrix; i++ ) {
+                    if ( i != *myTid ) {
+                        if ( pthread_cancel( th[i] ) == 0 )
+                            printf( "\nThread %ld cancella %d", *myTid, i );
+                        else 
+                            printf( "\nThread %d non esiste", i );
+                    }
                 }
+                pthread_mutex_unlock( &mutex );
+                pthread_exit( NULL );
             }
-        }
+        } else
+            pthread_mutex_unlock( &mutex );
     }
+    pthread_exit( NULL );
 }
 
 int main( int argc, char* argv[] ) {
@@ -96,7 +125,7 @@ int main( int argc, char* argv[] ) {
     scanf( "%d", &findNumber );
 
     // Thread
-    pthread_t th[ sizeMatrix ];
+    th = calloc ( sizeMatrix, sizeof( pthread_t ) );
 
     // Creazione Thread
     for ( int i = 0; i < sizeMatrix; i++ ) {
@@ -107,6 +136,12 @@ int main( int argc, char* argv[] ) {
             exit( EXIT_FAILURE );
         }
     }
+    
+    printf( "\nTutti i Thread sono stati creati." );
+    pthread_mutex_lock( &mutex );
+    created = TRUE;
+    pthread_cond_broadcast( &cond );
+    pthread_mutex_unlock( &mutex );
 
     // Attesa Thread
     for ( int i = 0; i < sizeMatrix; i++ ) {
@@ -117,9 +152,9 @@ int main( int argc, char* argv[] ) {
     }
 
     if ( row != - 1 && col != -1 )
-        printf( "\nRiga: %d, Colonna: %d", row, col);
+        printf( "\n\nRiga: %d, Colonna: %d", row, col);
     else 
-        printf( "\nNumero non trovato!" );
+        printf( "\n\nNumero non trovato!" );
 
     // Deallocazione ed uscita dal programma
     deAllocationMatrix();
