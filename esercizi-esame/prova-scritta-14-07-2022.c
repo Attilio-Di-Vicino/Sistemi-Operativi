@@ -101,6 +101,7 @@ void* routine( void* argv ) {
     for ( int j = 0; j < M; j++ )
         partialResult += matrixOne[ *myTid ][j] * matrixTwo[ *myTid ][j];
 
+    pthread_mutex_lock( &shared.mutex );
     while ( parameters.cont >= M )
         pthread_cond_wait( &shared.cond, &shared.mutex );
     // Sezione critica
