@@ -65,8 +65,15 @@ void deAllocationMatrix() {
 
 /**
  * routine dei Thread
+ * il Thread deve cercare per la sua riga il valore richiesto in input
+ * dopodiche se trovato eliminare tutti gli altri Thread,
+ * viene eseguito un primo controllo in mutua esclusione per verificare
+ * se l'elemento anche se trovato, gia è stato trovato allora prosegue senza fare ulteriori operazioni
+ * altrimenti se è stato il primo a trovarlo procede, aspettando che prima tutti i Thread siano stati creati,
+ * questo perchè se procede con la cancellazzione dei Thread ma in realtà non ancora tutti i Thread sono stati cancellati
+ * allora si imbatte in un problema di segmentation fault, quindi una volta creati tutti i Thread provvede a cancellarli.
  * 
- * @param argv struttura passata al Thread
+ * @param argv tid del Thread
 */
 void* routine( void* argv ) {
 

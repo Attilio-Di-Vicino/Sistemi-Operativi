@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+// Numero iterazione nella routine
 #define ITER 10
 
 // Struttura test
@@ -26,6 +27,13 @@ typedef struct {
 // Mutex
 pthread_mutex_t mutex;
 
+/**
+ * routine dei Thread
+ * incrementa i valori della struttura condivisa
+ * in mutua esclusione
+ * 
+ * @param argv struttura condivisa
+*/
 void* routine( void* argv ) {
 
     // Cast della struttura

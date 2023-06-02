@@ -33,10 +33,11 @@
 #include <pthread.h>
 #include <time.h>
 
-#define SIZE 20
-#define MAXVAL 100
-#define MAX_ITER 46
-#define OVER -1
+// Direttive al processore
+#define SIZE 20 // Size buffer
+#define MAXVAL 100 // Valore massimo che si può produrre
+#define MAX_ITER 46 // Limite iterazioni
+#define OVER -1 // Valore nullo all'interno del buffer
 
 // Struttura condivisa
 struct buffer {
@@ -66,6 +67,14 @@ struct sync {
     pthread_cond_t notempty;
 } shared = { PTHREAD_MUTEX_INITIALIZER, PTHREAD_COND_INITIALIZER, PTHREAD_COND_INITIALIZER };
 
+/**
+ * routine del Thread produttore
+ * essa produce ed inserisce il valore prodotto
+ * nel buffer condiviso, ed aggiorna i puntatori
+ * in mutua esclusione, e sincronizzato col Thread consumatore
+ * 
+ * @param argv struttura condivisa
+*/
 void* produce( void* argv ) {
     struct buffer* sharedBuffer = ( struct buffer* ) argv;
 
@@ -85,6 +94,14 @@ void* produce( void* argv ) {
     pthread_exit( EXIT_SUCCESS );
 }
 
+/**
+ * routine del Thread consumatore
+ * essa consuma e svuota il valore consumato alla rispettiva posizione
+ * nel buffer condiviso, ed aggiorna i puntatori
+ * in mutua esclusione, e sincronizzato col Thread produttore
+ * 
+ * @param argv struttura condivisa
+*/
 void* consume( void* argv ) {
     struct buffer* sharedBuffer = ( struct buffer* ) argv;
 

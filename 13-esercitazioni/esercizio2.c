@@ -26,8 +26,9 @@
 #include <pthread.h>
 #include <time.h>
 
-#define MAXVAL 255
-#define SIZE 6
+// Direttive al processore
+#define MAXVAL 255 // Valore massimo che si può produrre
+#define SIZE 6 // Size della matrice quadrata - Numero di Thread
 
 // Variabili globali
 int** matrix;
@@ -70,6 +71,16 @@ void deallocationMatrix() {
     free( matrix );
 }
 
+/**
+ * routine dei Thread creati
+ * effettua una verifica per capire se sta eseguendo
+ * un Thread con tid pari o dispari, ed effettua la somma parziale
+ * essa non è eseguita in mutua esclusione essendo che non è soggetta a race condiction.
+ * Mentre invece per la ricerca del minimo è necessario implementare una sezione critica
+ * essendo una risorsa condivisa e quindi soggetta a race condiction
+ * 
+ * @param argv tid del Thread
+*/
 void* routine( void* argv ) {
     pthread_t* myTid = ( pthread_t* ) argv;
     printf( "\nMy Tid è: %ld", *myTid );
@@ -87,7 +98,7 @@ void* routine( void* argv ) {
             parzialSum += matrix[ *myTid ][j];
     }
 
-    // eseguoil controllo del minimo
+    // eseguo il controllo del minimo
     // in mutua esclusione essendo soggeto 
     // a race condiction
     pthread_mutex_lock( &mutex );
