@@ -94,7 +94,6 @@ void* routine( void* argv ) {
                 // Imposto la flag dell'elemento trovato
                 pthread_mutex_lock( &mutex );
                 find = TRUE;
-                // pthread_mutex_unlock( &mutex );
 
                 /**
                  * Prima di cancellare tutti i thread
