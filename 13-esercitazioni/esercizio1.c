@@ -20,6 +20,7 @@
 
 #define TRUE 0
 #define FALSE 1
+#define MAXVALUE 100
 
 // Variabili globali
 int** matrix;
@@ -39,7 +40,7 @@ pthread_t* th;
 void initMatrix() {
     for ( int i = 0; i < sizeMatrix; i++ )
         for ( int j = 0; j < sizeMatrix; j++ )
-            matrix[i][j] = rand() % 10;
+            matrix[i][j] = rand() % MAXVALUE + 1;
 }
 
 void printMatrix() {
@@ -91,10 +92,11 @@ void* routine( void* argv ) {
             // Se ho trovato l'elemento
             if ( matrix[ *myTid ][j] == findNumber ) {
 
-                // Imposto la flag dell'elemento trovato
                 pthread_mutex_lock( &mutex );
-                find = TRUE;
 
+                // Imposto la flag dell'elemento trovato
+                find = TRUE;
+                
                 /**
                  * Prima di cancellare tutti i thread
                  * è necessario aspettare che tutti vengano creati

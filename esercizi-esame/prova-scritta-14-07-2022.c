@@ -102,11 +102,12 @@ void* routine( void* argv ) {
         partialResult += matrixOne[ *myTid ][j] * matrixTwo[ *myTid ][j];
 
     pthread_mutex_lock( &shared.mutex );
-    while ( parameters.cont >= M )
-        pthread_cond_wait( &shared.cond, &shared.mutex );
+    // La traccia richiede l'uso di variabili condizione
+    // while ( parameters.cont >= M )
+    //     pthread_cond_wait( &shared.cond, &shared.mutex );
     // Sezione critica
     parameters.arrayResult[ parameters.cont++ ] = partialResult;
-    pthread_cond_signal( &shared.cond );
+    // pthread_cond_signal( &shared.cond );
     pthread_mutex_unlock( &shared.mutex );
     pthread_exit( NULL );
 }
@@ -123,7 +124,7 @@ void main() {
 
     // Allocazione e inizializzazione array risultato
     parameters.arrayResult = ( int* ) calloc( M, sizeof( int ) );
-    parameters.cont = 0; // <- operazione ritondante
+    parameters.cont = 0; // <- operazione ridondante
     for ( int i = 0; i < M; i++ )
         parameters.arrayResult[i] = 0;
     printArrayResult();
