@@ -80,6 +80,7 @@ void* produce( void* argv ) {
 
     // Impongo un limite alle iterazioni
     for ( int i = 0; i < MAX_ITER; i++ ) {
+        pthread_mutex_lock( &shared.mutex );
         while ( sharedBuffer->count >= SIZE )
             pthread_cond_wait( &shared.notfull, &shared.mutex );
         // Sezione critica
@@ -107,6 +108,7 @@ void* consume( void* argv ) {
 
     // Impongo un limite alle iterazioni
     for ( int i = 0; i < MAX_ITER; i++ ) {
+        pthread_mutex_lock( &shared.mutex );
         while ( sharedBuffer->count == 0 )
             pthread_cond_wait( &shared.notempty, &shared.mutex );
         // Sezione critica

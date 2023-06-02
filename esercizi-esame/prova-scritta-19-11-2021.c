@@ -1,5 +1,5 @@
 /**
- * Prova Scritta 19/11/2021
+ * ESAME: Prova Scritta 19/11/2021
 */
 
 /**
@@ -15,4 +15,8 @@
  *      2. Se invece argv[1] è uguale al carattere 'm' ( che sta per "metà" ) ogni processo figlio Fi
  *         con i < M / 2 ( ovvero se M = 6, F0, F1, F2 ) manda un segnale ( SIGUSR1 ) all'altra metà dei
  *         processi, ovvero al processo i + M / 2 ( ovvero a F3, F4, F5, nel caso in cui M = 6 ).
+*/
+
+/**
+ * 
 */
