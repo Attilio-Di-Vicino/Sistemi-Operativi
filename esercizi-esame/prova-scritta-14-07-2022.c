@@ -107,7 +107,6 @@ void* routine( void* argv ) {
     //     pthread_cond_wait( &shared.cond, &shared.mutex );
     // Sezione critica
     parameters.arrayResult[ parameters.cont++ ] = partialResult;
-    // pthread_cond_signal( &shared.cond );
     pthread_mutex_unlock( &shared.mutex );
     pthread_exit( NULL );
 }
