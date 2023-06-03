@@ -114,7 +114,7 @@ void* master( void* argv ) {
 
     // Aquisisco il mutex
     pthread_mutex_lock( &shared.mutex );
-    // Attraverso il predicato verifico se il vettore è completo
+    // Verifico se il vettore è completo
     // Quindi utilizzo la wait associata ad una variabile di condizione
     // ed a un mutex nel caso in cui non è ancora completo il vettore
     // rilascio il mutex ed aspetto finchè non mi risveglino
@@ -124,6 +124,8 @@ void* master( void* argv ) {
     pthread_mutex_unlock( &shared.mutex );
 
     // Stampo ed esco
+    // il vettore non è più soggeto a race condiction
+    // perchè i thread slave non andranno più a modificarlo
     printVector();
     pthread_exit( EXIT_SUCCESS );
 }
@@ -160,7 +162,7 @@ void main( int argc, char* argv[] ) {
     }
 
     // Creazione Thread Master
-    if ( pthread_create( &th[ N + 1 ], NULL, master, ( void* ) NULL ) != 0 ) {
+    if ( pthread_create( &th[ N ], NULL, master, ( void* ) NULL ) != 0 ) {
         perror( "Errore nella creazione del thread master" );
         exit( EXIT_FAILURE );
     }
@@ -174,7 +176,7 @@ void main( int argc, char* argv[] ) {
     }
 
     // Attesa Thread master
-    if ( pthread_join( th[ N + 1 ], NULL ) != 0 ) {
+    if ( pthread_join( th[ N ], NULL ) != 0 ) {
         perror( "Errore nella join dei thread master" );
         exit( EXIT_FAILURE );
     }
