@@ -79,7 +79,6 @@ void deAllocationMatrix() {
 void* routine( void* argv ) {
 
     pthread_t* myTid = ( pthread_t* ) argv;
-    printf( "\nMy Tid è: %ld", *myTid );
 
     // Inizio la mia ricerca
     for ( int j = 0; j < sizeMatrix; j++ ) {

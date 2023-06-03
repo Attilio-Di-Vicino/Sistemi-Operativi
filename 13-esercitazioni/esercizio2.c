@@ -83,7 +83,6 @@ void deallocationMatrix() {
 */
 void* routine( void* argv ) {
     pthread_t* myTid = ( pthread_t* ) argv;
-    printf( "\nMy Tid è: %ld", *myTid );
 
     // Variabile locale
     int parzialSum = 0;

@@ -80,7 +80,6 @@ void deallocationMatrixVector() {
 
 void* slave( void* argv ) {
     pthread_t* myTid = ( pthread_t* ) argv;
-    printf( "\nMy Tid è: %ld", *myTid );
 
     // Plevelo casualmente
     int val = OVER;
@@ -109,8 +108,6 @@ void* slave( void* argv ) {
 }
 
 void* master( void* argv ) {
-    
-    printf( "\nThread Master" );
 
     // Aquisisco il mutex
     pthread_mutex_lock( &shared.mutex );

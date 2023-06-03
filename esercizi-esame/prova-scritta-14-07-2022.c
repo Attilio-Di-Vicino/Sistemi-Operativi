@@ -94,10 +94,8 @@ void printArrayResult() {
 
 void* routine( void* argv ) {
     pthread_t* myTid = ( pthread_t* ) argv;
-    printf( "\nMy tid è: %ld", *myTid );
 
     long int partialResult = 0;
-
     for ( int j = 0; j < M; j++ )
         partialResult += matrixOne[ *myTid ][j] * matrixTwo[ *myTid ][j];
 
