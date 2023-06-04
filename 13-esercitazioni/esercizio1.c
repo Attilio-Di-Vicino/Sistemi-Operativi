@@ -18,8 +18,8 @@
 #include <pthread.h>
 #include <time.h>
 
-#define TRUE 0
-#define FALSE 1
+#define TRUE 1
+#define FALSE 0
 #define MAXVALUE 99
 
 // Variabili globali
@@ -91,12 +91,12 @@ void* routine( void* argv ) {
         // Se l'elemento non è stato ancora trovato
         pthread_mutex_lock( &mutex );
         if ( find == FALSE ) {
-            pthread_mutex_unlock( &mutex );
+            // pthread_mutex_unlock( &mutex );
 
             // Se ho trovato l'elemento
             if ( matrix[ *myTid ][j] == findNumber ) {
 
-                pthread_mutex_lock( &mutex );
+                // pthread_mutex_lock( &mutex );
 
                 // Imposto la flag dell'elemento trovato
                 find = TRUE;
@@ -110,8 +110,12 @@ void* routine( void* argv ) {
                  * Utilizzo una variabile condizione in modo da evitare 
                  * l'utilizzo della tecnica Polling
                 */
-                while ( created == FALSE )
+                while ( created == FALSE ) {
                     pthread_cond_wait( &cond, &mutex );
+                    printf( "\nThread %ld, Segnale ricevuto con successo!", *myTid );
+                    printf( "\nProseguo con la cancellazione dei Thread." );
+                    printf( "\n" );
+                }
 
                 // Salvo i punti
                 row = *myTid;
@@ -128,7 +132,8 @@ void* routine( void* argv ) {
                 }
                 pthread_mutex_unlock( &mutex );
                 pthread_exit( NULL );
-            }
+            } else 
+                pthread_mutex_unlock( &mutex );
         } else
             pthread_mutex_unlock( &mutex );
     }
