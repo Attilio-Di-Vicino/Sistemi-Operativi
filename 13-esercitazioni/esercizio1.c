@@ -20,7 +20,7 @@
 
 #define TRUE 0
 #define FALSE 1
-#define MAXVALUE 100
+#define MAXVALUE 99
 
 // Variabili globali
 int** matrix;
@@ -46,8 +46,13 @@ void initMatrix() {
 void printMatrix() {
     printf( "\n" );
     for ( int i = 0; i < sizeMatrix; i++ ) {
-        for ( int j = 0; j < sizeMatrix; j++ )
-            printf( "%d    ", matrix[i][j] );
+        for ( int j = 0; j < sizeMatrix; j++ ) {
+            int val = matrix[i][j];
+            if ( val > 9 )
+                printf( "%d   ", val );
+            else
+                printf( "%d    ", val );
+        }
         printf( "\n" );
     }
 }
