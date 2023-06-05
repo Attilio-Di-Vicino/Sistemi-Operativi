@@ -54,20 +54,16 @@ int main( int argc, char* argv[] ) {
         // Informazioni utili
         printf( "\nVerificando: <path-directory>/%s -> ", fileName );
 
-        // Recupero informazioni del file utilizzando stat
-        // if ( stat( dir->d_name, &fileC ) == -1 ) {
-        //     perror( "Errore nel recupero delle informazioni" );
-        //     exit( EXIT_FAILURE );
-        // } 
+        // Recupero informazioni del file utilizzando stat 
         stat( fileName, &fileC );
 
         // Controllo iniziale per verificare se il file è regolare con S_ISREG
         // Controlli suucessivi per verificare se l'utente
         // ha i diritti di lettura e scrittura sul file
-        if ( S_ISREG( fileC.st_mode ) &&
-            ( fileC.st_mode & S_IRUSR ) && ( fileC.st_mode & S_IWUSR ) &&
-            ( fileC.st_mode & S_IRGRP ) && ( fileC.st_mode & S_IWGRP ) &&
-            ( fileC.st_mode & S_IROTH ) && ( fileC.st_mode & S_IWOTH ) ) {
+        if ( S_ISREG( fileC.st_mode ) && // file regolare
+            ( fileC.st_mode & S_IRUSR ) && ( fileC.st_mode & S_IWUSR ) &&  // read & write owner
+            ( fileC.st_mode & S_IRGRP ) && ( fileC.st_mode & S_IWGRP ) &&  // read & write group
+            ( fileC.st_mode & S_IROTH ) && ( fileC.st_mode & S_IWOTH ) ) { // read & write others
 
             // Se supera i precendenti controlli   
             printf( "bytes: %ld", fileC.st_size );
@@ -79,6 +75,8 @@ int main( int argc, char* argv[] ) {
         }
     }
 
+    // Chiusura cartella
+    closedir( directory );
     printf( "\n" );
     exit( EXIT_SUCCESS );
 }
