@@ -39,9 +39,9 @@ int main( int argc, char** argv ) {
         exit( EXIT_FAILURE );
     }
 
-    nproducers = MIN(atoi(argv[2]), MAXNTHREADS);
+    nproducers = MIN( atoi( argv[2] ), MAXNTHREADS );
 
-    nitems = atoi(argv[1]);
+    nitems = atoi( argv[1] );
 
     // Creazione semaforo binario
     // La flag 0, quindi il secondo parametro
