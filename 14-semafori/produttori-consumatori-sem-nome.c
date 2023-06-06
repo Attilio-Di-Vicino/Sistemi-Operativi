@@ -70,21 +70,21 @@ void* produce( void* arg ) {
     
     int i;
     
-    for( i = 0; i < nitems; i++ ) {
+    for ( i = 0; i < nitems; i++ ) {
 
         // Decremento il semaforo contatore
-        sem_wait(shared.nempty);
+        sem_wait( shared.nempty );
 
         // attende almeno un posto vuoto
-        sem_wait(shared.mutex);
+        sem_wait( shared.mutex );
         // Sezione critica
         // memorizza i nel buffer circolare
         shared.buff[ i % NBUFF ] = i;
         printf( "\nProdotto -> [ %d ]: %d", i % NBUFF, i );
-        sem_post(shared.mutex);
+        sem_post( shared.mutex );
 
         // Incremento il semaforo contatore
-        sem_post(shared.nstored);
+        sem_post( shared.nstored );
         // un altro elemento è disponibile
     }
     return NULL;
@@ -97,18 +97,18 @@ void* consume( void* arg ) {
     for ( i = 0; i < nitems; i++ ) {
 
         // Decremento il semaforo contatore
-        sem_wait(shared.nstored);
+        sem_wait( shared.nstored );
         // attende almeno un elemento
-        sem_wait(shared.mutex);
+        sem_wait( shared.mutex );
         // Sezione critica
         if ( shared.buff[ i % NBUFF ] != i )
             printf( "buff[ %d ]: %d\n", i, shared.buff[ i % NBUFF ] );
         else 
             printf( "\nConsumo -> [ %d ]: %d", i % NBUFF, shared.buff[ i % NBUFF ] );
-        sem_post(shared.mutex);
+        sem_post( shared.mutex );
 
         // Incremento il semaforo contatore
-        sem_post(shared.nempty);
+        sem_post( shared.nempty );
         //un altro posto libero
     }
     return NULL;
