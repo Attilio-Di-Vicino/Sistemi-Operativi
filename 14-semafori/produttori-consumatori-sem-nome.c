@@ -38,7 +38,7 @@ int main( int argc, char** argv ) {
         exit( EXIT_FAILURE );
     }
 
-    nitems = atoi(argv[1]);
+    nitems = atoi( argv[1] );
 
     // Creazione semaforo binario
     shared.mutex = sem_open( SEM_MUTEX, O_CREAT | O_EXCL, FILE_MODE, 1 );
