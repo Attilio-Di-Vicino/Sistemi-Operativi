@@ -57,6 +57,11 @@ int main( int argc, char** argv ) {
     pthread_join( tid_produce, NULL );
     pthread_join( tid_consume, NULL );
 
+    // Chiudere i semafori
+    sem_close( SEM_MUTEX );
+    sem_close( SEM_NEMPTY );
+    sem_close( SEM_NSTORED );
+
     // rimuove i semafori
     sem_unlink( SEM_MUTEX );
     sem_unlink( SEM_NEMPTY );
