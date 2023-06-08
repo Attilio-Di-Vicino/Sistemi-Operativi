@@ -94,8 +94,6 @@ void* produce( void* arg ) {
         // Sezione critica
         if ( shared.nput >= nitems ) {
 
-            // Da slide viengono eseguite
-            // le seguenti operazioni
             sem_post( &shared.nempty );
             sem_post( &shared.mutex );
             return NULL; // tutto prodotto
