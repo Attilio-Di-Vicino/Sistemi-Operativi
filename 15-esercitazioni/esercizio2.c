@@ -20,6 +20,7 @@
 #include <semaphore.h>
 #include <time.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 
 #define MAX 20
 #define CATEGORY 2
@@ -33,7 +34,7 @@
 // Semafori per sincronizzare l'accesso al ponte
 // Ed mutex e variabili condizione
 struct sync {
-	sem_t* empty;
+	sem_t* posti;
 	pthread_mutex_t mutex;
 	pthread_cond_t cond;
 } shared;
@@ -58,7 +59,7 @@ void* automobile( void* arg ) {
 	
     // Attendo nel caso ci siano MAX veicoli sul ponte
     // implementando così la concorrenza limitata
-	sem_wait( shared.empty );
+	sem_wait( shared.posti );
     // Controllo che nella corsia opposta non stiano venendo camion
     // il tutto in mutua esclusione
 	pthread_mutex_lock( &shared.mutex );
@@ -68,7 +69,7 @@ void* automobile( void* arg ) {
     // la corsia opposta è libera da camion e posso passare
 	printf( "\nAutomobile %ld è passato sulla corsia %d", *myTid, rs );
     // esco e libero un posto sul ponte
-	sem_post( shared.empty );
+	sem_post( shared.posti );
 }
 
 void* camion( void* arg ) {
@@ -87,7 +88,7 @@ void* camion( void* arg ) {
 		rsReverse = 0;
 	// Attendo nel caso ci siano MAX veicoli sul ponte
     // implementando così la concorrenza limitata
-	sem_wait( shared.empty );
+	sem_wait( shared.posti );
     // Controllo che nella corsia opposta non stiano venendo camion
     // il tutto in mutua esclusione
 	pthread_mutex_lock( &shared.mutex );
@@ -105,7 +106,7 @@ void* camion( void* arg ) {
 	pthread_cond_signal( &shared.cond );
 	pthread_mutex_unlock( &shared.mutex );
     // esco e libero un posto sul ponte
-	sem_post( shared.empty );
+	sem_post( shared.posti );
 }
 
 void main( int argc, char* argv[] ) {
@@ -113,10 +114,10 @@ void main( int argc, char* argv[] ) {
 	printf( "\nMax: %d", ( int ) MAX );
 	
 	// Eseguiamo l'unlink
-	sem_unlink( "empty" );
+	sem_unlink( "posti" );
 	
 	// Apriamo i semafori
-	shared.empty = sem_open( "empty", OFLAG, FILEMODE, MAX );
+	shared.posti = sem_open( "posti", OFLAG, FILEMODE, MAX );
 	
 	// Inizializzazione dinamica di mutex e variabile condizione
 	pthread_mutex_init( &shared.mutex, NULL );
@@ -152,10 +153,10 @@ void main( int argc, char* argv[] ) {
 	}
 	
 	// Ciusura semafori
-	sem_close( shared.empty );
+	sem_close( shared.posti );
 	
 	// Eseguiamo l'unlink
-	sem_unlink( "empty" );
+	sem_unlink( "posti" );
 	
 	// Deallozazione di mutex e variabile condizione
 	pthread_mutex_destroy( &shared.mutex );

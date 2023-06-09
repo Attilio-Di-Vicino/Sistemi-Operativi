@@ -6,7 +6,9 @@
 	],
 	"settings": {
 		"files.associations": {
-			"apue.h": "c"
+			"apue.h": "c",
+			"array": "c",
+			"string_view": "c"
 		}
 	}
 }
