@@ -1,4 +1,23 @@
 /**
+ * ESERCIZIO: 1
+ *
+ * Facendo uso della libreria Pthread( fatto con i semafori per esercizio ),
+ *
+ * realizzare un programma in cui un thread scrittore,
+ * dato un intero N da riga di comando ( dove 10 < N <= 15 ),
+ * scrive in un file nella prima posizione,
+ *
+ * uno alla volta ed ogni ½ secondo, la sequenza di Fibonacci di ordine N,
+ * alternandosi con un thread lettore che legge, uno alla volta dalla
+ * prima posizione del file, i numeri scritti dal thread scrittore.
+ *
+ * Un terzo thread attende la lettura dell’ N-esimo intero, quindi
+ * stampa a video il messaggio
+ * “Operazioni concluse, arrivederci dal thread: tid”,
+ * attende 5 secondi e termina.
+ */
+
+/**
  * ESERCIZIO: 3
  * 
  * Facendo uso della libreria Pthread( fatto con i semafori per esercizio ),
@@ -41,59 +60,10 @@ int lettore;
 int N;
 char* fileName;
 
-int fibonacci( int n ) {
-    if ( n <= 1 )
-        return n;
-    return fibonacci( n - 1 ) + fibonacci( n - 2 ); 
-}
-
-void* writer( void* ) {
-
-    for ( int i = 0; i <= N; i++ ) {
-        sleep( TIMESLEEP );
-        sem_wait( &shared.empty );
-        sem_wait( &shared.sem_CS );
-        // Sezione critica
-        // Scrivo sul file
-        int fibo = fibonacci(i);
-        lseek( file, 0, SEEK_SET);
-        write( file, &fibo, sizeof( int ) );
-        printf( "\nScrittore: %d", fibo );
-        sem_post( &shared.sem_CS );
-        sem_post( &shared.full );
-    }
-    pthread_exit( NULL );
-}
-
-void* reader( void* ) {
-
-    int number;
-
-    for ( int i = 0; i <= N; i++ ) {
-        sleep( TIMESLEEP );
-        sem_wait( &shared.full );
-        sem_wait( &shared.sem_CS );
-        // Sezione critica
-        // Leggo sul file
-        lseek( file, 0, SEEK_SET) ;
-        read( file, &number, sizeof( int ) );
-        printf( "\nLettore: %d", number );
-        sem_post( &shared.sem_CS );
-        sem_post( &shared.empty );
-    }
-    sem_post( &shared.print );
-    pthread_exit( NULL );
-}
-
-void* final( void* ) {
-
-    sem_wait( &shared.print );
-    printf( "\nOperazioni concluse, arrivederci dal thread: %ld", pthread_self() );
-    sleep( 5 );
-    pthread_exit( NULL );
-}
-
-
+int fibonacci( int );
+void* writer( void* );
+void* reader( void* );
+void* final( void* );
 int main( int argc, char* argv[] ) {
 
     // Primo controllo verifico i parametri in input
@@ -167,4 +137,56 @@ int main( int argc, char* argv[] ) {
 
     printf( "\n" );
     exit( EXIT_SUCCESS );
+}
+
+int fibonacci( int n ) {
+    if ( n <= 1 )
+        return n;
+    return fibonacci( n - 1 ) + fibonacci( n - 2 ); 
+}
+
+void* writer( void* arg ) {
+
+    for ( int i = 0; i <= N; i++ ) {
+        sleep( TIMESLEEP );
+        sem_wait( &shared.empty );
+        sem_wait( &shared.sem_CS );
+        // Sezione critica
+        // Scrivo sul file
+        int fibo = fibonacci(i);
+        lseek( file, 0, SEEK_SET);
+        write( file, &fibo, sizeof( int ) );
+        printf( "\nScrittore: %d", fibo );
+        sem_post( &shared.sem_CS );
+        sem_post( &shared.full );
+    }
+    pthread_exit( NULL );
+}
+
+void* reader( void* arg ) {
+
+    int number;
+
+    for ( int i = 0; i <= N; i++ ) {
+        sleep( TIMESLEEP );
+        sem_wait( &shared.full );
+        sem_wait( &shared.sem_CS );
+        // Sezione critica
+        // Leggo sul file
+        lseek( file, 0, SEEK_SET) ;
+        read( file, &number, sizeof( int ) );
+        printf( "\nLettore: %d", number );
+        sem_post( &shared.sem_CS );
+        sem_post( &shared.empty );
+    }
+    sem_post( &shared.print );
+    pthread_exit( NULL );
+}
+
+void* final( void* arg ) {
+
+    sem_wait( &shared.print );
+    printf( "\nOperazioni concluse, arrivederci dal thread: %ld", pthread_self() );
+    sleep( 5 );
+    pthread_exit( NULL );
 }
