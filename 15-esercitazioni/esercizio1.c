@@ -26,6 +26,7 @@
 
 #define TIMESLEEP 1
 #define SIZEFILE 255
+#define OVER -1
 
 // Semafori
 struct sync {
@@ -40,6 +41,12 @@ int file;
 int lettore;
 int N;
 char* fileName;
+
+/**
+ * Utilizzo la tecnica della memoization
+ * per la risoluzione di fibonacci ( ASD )
+*/
+int* memoization;
 
 int fibonacci( int );
 void* writer( void* );
@@ -57,6 +64,10 @@ int main( int argc, char* argv[] ) {
     fileName = argv[1];
     N = atoi( argv[2] );
 
+    // Allocaione e inizializzazione memoization
+    memoization = ( int* ) calloc( N + 1, sizeof( int ) );
+    for ( int i = 0; i <= N; i++ )
+        memoization[i] = OVER;
 
     // Verifico che N rispetti il valore
     if ( N <= 10 || N > 15 ) {
@@ -121,9 +132,13 @@ int main( int argc, char* argv[] ) {
 }
 
 int fibonacci( int n ) {
+    if ( memoization[n] != OVER )
+        return memoization[n];
     if ( n <= 1 )
-        return n;
-    return fibonacci( n - 1 ) + fibonacci( n - 2 ); 
+        memoization[n] = n;
+    else 
+        memoization[n] = fibonacci( n - 1 ) + fibonacci( n - 2 );
+    return memoization[n];
 }
 
 void* writer( void* arg ) {
@@ -134,7 +149,7 @@ void* writer( void* arg ) {
         sem_wait( &shared.sem_CS );
         // Sezione critica
         // Scrivo sul file
-        int fibo = fibonacci(i);
+        int fibo = memoization[i];
         lseek( file, 0, SEEK_SET);
         write( file, &fibo, sizeof( int ) );
         printf( "\nScrittore: %d", fibo );
