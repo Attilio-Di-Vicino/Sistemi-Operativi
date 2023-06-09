@@ -173,8 +173,8 @@ void* reader( void* arg ) {
         sem_wait( &shared.sem_CS );
         // Sezione critica
         // Leggo sul file
-        lseek( file, 0, SEEK_SET) ;
-        read( file, &number, sizeof( int ) );
+        lseek( lettore, 0, SEEK_SET) ;
+        read( lettore, &number, sizeof( int ) );
         printf( "\nLettore: %d", number );
         sem_post( &shared.sem_CS );
         sem_post( &shared.empty );
