@@ -127,6 +127,12 @@ int main( int argc, char* argv[] ) {
     // Chiusura file
     close( file );
 
+    // deallocazione
+    sem_destroy( &shared.full );
+    sem_destroy( &shared.empty );
+    sem_destroy( &shared.sem_CS );
+    sem_destroy( &shared.print );
+
     printf( "\n" );
     exit( EXIT_SUCCESS );
 }
