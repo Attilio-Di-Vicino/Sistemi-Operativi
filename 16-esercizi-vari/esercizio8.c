@@ -34,7 +34,101 @@ struct sync {
 int N;
 int generatedNumber;
 long int resultFactorial;
-int* memoization;
+int* memoization; // sfrutto la programmazione dinamica
+
+long int fattoriale( int );
+void* slave( void* );
+void* master( void* );
+void main( int argc, char* argv[] ) {
+
+	// Controlllo i parametri presi in input da riga di comando
+	if ( argc != 2 ) {
+		printf( "\nusage: %s <#N>\n", argv[0] );
+		exit( EXIT_FAILURE );
+	}
+	
+	N = atoi( argv[1] );
+		
+	// Stampa di verifica
+	printf( "\nN: %d", N );
+	
+	srand( time( NULL ) );
+
+    // Inizializzazione memoization
+    memoization = ( int* ) malloc( N * sizeof( int ) );
+    for ( int i = 0; i < N; i++ )
+        memoization[i] = OVER;
+	
+	// unlink dei semafori
+	if ( sem_unlink( WRITER ) != 0 ) {
+        perror( "Errore nell'unlink del semaforo writer" );
+        exit( EXIT_FAILURE );
+    }
+	if ( sem_unlink( READER ) != 0 ) {
+        perror( "Errore nell'unlink del semaforo reader" );
+        exit( EXIT_FAILURE );
+    }
+	
+	// apertura semafori binari
+	shared.writer = sem_open( WRITER, OFLAG, FILE_MODE, 1 );
+	shared.reader = sem_open( READER, OFLAG, FILE_MODE, 0 );
+	
+	// Controllo dei semafori
+	if ( shared.writer == NULL ) {
+		perror( "Errore nella creazione del semafori writer" );
+		exit( EXIT_FAILURE );
+	}
+    if ( shared.reader == NULL ) {
+		perror( "Errore nella creazione del semafori reader" );
+		exit( EXIT_FAILURE );
+	}
+	
+	// Thread
+	pthread_t thMaster, thSlave;
+	
+	// Creazione Thread
+	if ( pthread_create( &thSlave, NULL, slave, NULL ) != 0 ) {
+		perror( "Errore nella creazione del thread slave" );
+		exit( EXIT_FAILURE );
+	}
+	if ( pthread_create( &thMaster, NULL, master, NULL ) != 0 ) {
+		perror( "Errore nella creazione del thread master" );
+		exit( EXIT_FAILURE );
+	}
+	
+	// Attesa Thread
+	if ( pthread_join( thSlave, NULL ) != 0 ) {
+		perror( "Errore nella join del thread slave" );
+		exit( EXIT_FAILURE );
+	}
+	if ( pthread_join( thMaster, NULL ) != 0 ) {
+		perror( "Errore nella join del thread master" );
+		exit( EXIT_FAILURE );
+	}
+	
+	// chiusura semafori
+	if ( sem_close( shared.writer ) != 0 ) {
+        perror( "Errore nella close del semaforo writer" );
+        exit( EXIT_FAILURE );
+    }
+	if ( sem_close( shared.reader ) != 0 ) {
+        perror( "Errore nella close del semaforo reader" );
+        exit( EXIT_FAILURE );
+    }
+	
+	// unlink dei semafori
+	if ( sem_unlink( WRITER ) != 0 ) {
+        perror( "Errore nell'unlink del semaforo writer" );
+        exit( EXIT_FAILURE );
+    }
+	if ( sem_unlink( READER ) != 0 ) {
+        perror( "Errore nell'unlink del semaforo reader" );
+        exit( EXIT_FAILURE );
+    }
+	
+	printf( "\n" );
+	exit( EXIT_SUCCESS );
+}
 
 long int fattoriale( int n ) {
     if ( memoization[n] != OVER )
@@ -64,73 +158,4 @@ void* master( void* arg ) {
 		sem_post( shared.writer );
 	}
 	pthread_exit( NULL );
-}
-
-void main( int argc, char* argv[] ) {
-
-	// Controlllo i parametri presi in input da riga di comando
-	if ( argc != 2 ) {
-		printf( "\nusage: %s <#N>\n", argv[0] );
-		exit( EXIT_FAILURE );
-	}
-	
-	N = atoi( argv[1] );
-		
-	// Stampa di verifica
-	printf( "\nN: %d", N );
-	
-	srand( time( NULL ) );
-
-    // Inizializzazione memoization
-    memoization = ( int* ) malloc( N * sizeof( int ) );
-    for ( int i = 0; i < N; i++ )
-        memoization[i] = OVER;
-	
-	// unlink dei semafori
-	sem_unlink( WRITER );
-	sem_unlink( READER );
-	
-	// apertura semafori binari
-	shared.writer = sem_open( WRITER, OFLAG, FILE_MODE, 1 );
-	shared.reader = sem_open( READER, OFLAG, FILE_MODE, 0 );
-	
-	// Controllo dei semafori
-	if ( shared.writer == NULL || shared.reader == NULL ) {
-		perror( "Errore nella creazione dei semafori" );
-		exit( EXIT_FAILURE );
-	}
-	
-	// Thread
-	pthread_t thMaster, thSlave;
-	
-	// Creazione Thread
-	if ( pthread_create( &thSlave, NULL, slave, NULL ) != 0 ) {
-		perror( "Errore nella creazione del thread slave" );
-		exit( EXIT_FAILURE );
-	}
-	if ( pthread_create( &thMaster, NULL, master, NULL ) != 0 ) {
-		perror( "Errore nella creazione del thread master" );
-		exit( EXIT_FAILURE );
-	}
-	
-	// Attesa Thread
-	if ( pthread_join( thSlave, NULL ) != 0 ) {
-		perror( "Errore nella join del thread slave" );
-		exit( EXIT_FAILURE );
-	}
-	if ( pthread_join( thMaster, NULL ) != 0 ) {
-		perror( "Errore nella join del thread master" );
-		exit( EXIT_FAILURE );
-	}
-	
-	// chiusura semafori
-	sem_close( shared.writer );
-	sem_close( shared.reader );
-	
-	// unlink dei semafori
-	sem_unlink( WRITER );
-	sem_unlink( READER );
-	
-	printf( "\n" );
-	exit( EXIT_SUCCESS );
 }
