@@ -48,7 +48,7 @@ long int fattoriale( int n ) {
 
 void* slave( void* arg ) {
 	for ( int i = 0; i < N; i++ ) {
-		int rs = rand() % MAXVALUE + 1;
+		int rs = rand() % ( MAXVALUE + 1 );
 		sem_wait( shared.writer );
 		generatedNumber = rs;
 		resultFactorial = fattoriale( generatedNumber );
@@ -130,7 +130,6 @@ void main( int argc, char* argv[] ) {
 	// unlink dei semafori
 	sem_unlink( WRITER );
 	sem_unlink( READER );
-	
 	
 	printf( "\n" );
 	exit( EXIT_SUCCESS );
