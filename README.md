@@ -6,42 +6,69 @@ Questo repository è dedicato al corso di Sistemi Operativi - Parte Laboratorio 
 
 Il repository include i seguenti argomenti principali:
 
-### 1. File I/O
+### 1. Makefile
+
+- Concetti fondamentali dei Makefile e il loro utilizzo per automatizzare la compilazione e l'esecuzione dei programmi. gestione delle dipendenze dei file sorgente.
+
+### 2. File I/O
 
 - Operazioni di input/output sui file in ambiente Unix.
 - Apertura, lettura, scrittura e chiusura dei file utilizzando le chiamate di sistema appropriate.
 - Gestione degli errori durante le operazioni di I/O.
 
-### 2. File e Directory
+### 3. File e Directory
 
 - Concetti fondamentali dei file e delle directory in Unix.
 - Manipolazione dei file e delle directory utilizzando le chiamate di sistema appropriate.
 - Creazione, eliminazione, spostamento e rinomina di file e directory.
 
-### 3. Processi
+### 4. Processi
 
 - Concetti di base sui processi in ambiente Unix.
 - Creazione, terminazione e gestione dei processi.
 - Comunicazione e sincronizzazione tra processi utilizzando pipe anonime e FIFO.
 - Utilizzo dei segnali per la gestione degli eventi e delle interruzioni.
 
-### 4. IPC Socket
+### 5. Segnali
+
+- Uso dei segnali per la comunicazione tra processi e per gestire eventi e interruzioni nel sistema operativo.
+- Catturare e gestire segnali specifici per implementare comportamenti personalizzati nei programmi.
+
+### 6. Pipe Anonime
+
+- Utilizzo delle pipe anonime per la comunicazione tra processi in ambiente Unix.
+- Creare, utilizzare e gestire le pipe anonime per lo scambio di dati tra processi.
+
+### 7. Pipe FIFO
+
+- Concetti e utilizzo delle pipe FIFO per la comunicazione tra processi in ambiente Unix.
+- Creare, utilizzare e gestire le pipe FIFO per la trasmissione di dati tra processi.
+
+### 8. IPC Socket
 
 - Introduzione alla comunicazione tra processi utilizzando socket IPC (Inter-Process Communication).
 - Creazione, connessione, invio e ricezione di dati attraverso socket.
 - Comunicazione tra processi locali o remoti tramite socket.
 
-### 5. Thread
+### 9. Thread
 
 - Concetti di base sui thread e sulla programmazione multithread.
 - Creazione, terminazione e gestione dei thread.
 - Sincronizzazione dei thread utilizzando mutex, variabili di condizione e semafori.
 
-### 6. Shell Scripting
+### 10. Mutex e Variabili di Condizione
 
-- Introduzione alla creazione di script di shell per l'automazione di compiti comuni.
-- Utilizzo di variabili, comandi di controllo di flusso, cicli e funzioni di shell.
-- Esecuzione di script di shell e scripting avanzato.
+- Utilizzo dei mutex e delle variabili di condizione per sincronizzare l'accesso concorrente alle risorse condivise tra i thread.
+- Vengono utilizzate queste strutture per prevenire condizioni di race e garantire la corretta sincronizzazione tra i thread.
+
+### 11. Semafori
+
+- Concetti e utilizzo dei semafori per gestire l'accesso concorrente alle risorse tra i thread.
+- Vengono utilizzati i semafori per implementare meccanismi di sincronizzazione e risolvere problemi di mutua esclusione e cooperazione tra i thread.
+
+### 12. Esercizi Utili
+
+- esercizi pratici degli argomenti trattati nel corso di Sistemi Operativi.
 
 ## Utilizzo
 
