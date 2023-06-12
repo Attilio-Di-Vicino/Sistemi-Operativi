@@ -1,169 +1,131 @@
 /**
  * ESERCIZIO: 3
  * 
- * Facendo uso della libreria Pthread( fatto con i semafori per esercizio ),
+ * Scrivere un programma C in ambiente Linux che facendo uso della libreria Pthread
+ * realizzi il seguente comportamento: 
  * 
- * realizzare un programma in cui un thread scrittore,
- * dato un intero N da riga di comando ( dove 10 < N <= 15 ),
- * scrive in un file nella prima posizione,
+ *  1. un master thread inizializza una variabile globale a zero,
+ *     crea un thread produttore ed un thread consumatore e, 
+ *     in un ciclo infinito, stampa il valore della variabile globale.
+ *   
+ *  2. Il produttore incrementa, ad ogni passo,
+ *     la variabile globale di due unità e dorme per un secondo. 
  * 
- * uno alla volta ed ogni ½ secondo, la sequenza di Fibonacci di ordine N, 
- * alternandosi con un thread lettore che legge, uno alla volta dalla
- * prima posizione del file, i numeri scritti dal thread scrittore.
+ *  3. Il consumatore decrementa la variabile globale
+ *     di una unità e dorme per un secondo. 
  * 
- * Un terzo thread attende la lettura dell’ N-esimo intero, quindi
- * stampa a video il messaggio 
- * “Operazioni concluse, arrivederci dal thread: tid”,
- * attende 5 secondi e termina.
+ *  4. Il processo termina quando la variabile globale è maggiore
+ *     di un valore intero passato da riga di comando. 
+ * 
+ * Utilizzare un semaforo Posix per la sincronizzazione.
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <unistd.h>
 #include <semaphore.h>
-#include <fcntl.h>
+#include <unistd.h>
 
 #define TIMESLEEP 1
-#define SIZEFILE 255
 
-// Semafori
+// Struttura globale per la sincronizzazione
 struct sync {
-    sem_t full;
-    sem_t empty;
-    sem_t sem_CS;
-    sem_t print;
+    sem_t sem_CS; // semaforo binario
+    sem_t full; // semaforo contatore
+    sem_t empty; // semaforo contatore
 } shared;
 
 // Variabili globali
-int file;
-int lettore;
 int N;
-char* fileName;
+int glob;
 
-int fibonacci( int n ) {
-    if ( n <= 1 )
-        return n;
-    return fibonacci( n - 1 ) + fibonacci( n - 2 ); 
-}
+void* produce( void* arg ) {
+    while ( 1 ) {
 
-void* writer( void* ) {
-
-    for ( int i = 0; i <= N; i++ ) {
-        sleep( TIMESLEEP );
+        // Decremento lo spazio vuoto
         sem_wait( &shared.empty );
+        // Entro in sezione critica
         sem_wait( &shared.sem_CS );
-        // Sezione critica
-        // Scrivo sul file
-        int fibo = fibonacci(i);
-        lseek( file, 0, SEEK_SET);
-        write( file, &fibo, sizeof( int ) );
-        printf( "\nScrittore: %d", fibo );
+        // Controllo prima glob
+        if ( glob > N ) {
+            sem_post( &shared.sem_CS );
+            sem_post( &shared.empty );
+            pthread_exit( NULL );
+        }
+        glob += 2;
+        printf( "\nProdotto 2 elementi -> glob: %d", glob );
+        // Esco dalla sezione critica
         sem_post( &shared.sem_CS );
+        sleep( TIMESLEEP );
+        // Incremento lo spazio pieno
         sem_post( &shared.full );
     }
-    pthread_exit( NULL );
 }
 
-void* reader( void* ) {
+void* consume( void* arg ) {
+    while ( 1 ) {
 
-    int number;
-
-    for ( int i = 0; i <= N; i++ ) {
-        sleep( TIMESLEEP );
+        // Decremento lo spazio pieno
         sem_wait( &shared.full );
+        // Entro in sezione critica
         sem_wait( &shared.sem_CS );
-        // Sezione critica
-        // Leggo sul file
-        lseek( file, 0, SEEK_SET) ;
-        read( file, &number, sizeof( int ) );
-        printf( "\nLettore: %d", number );
+        // Controllo prima glob
+        if ( glob > N ) {
+            sem_post( &shared.sem_CS );
+            sem_post( &shared.full );
+            pthread_exit( NULL );
+        }
+        printf( "\nConsumato 1 elemento -> glob: %d", glob-- );
+        // Esco dalla sezione critica
         sem_post( &shared.sem_CS );
+        sleep( TIMESLEEP );
+        // Incremento lo spazio pieno
         sem_post( &shared.empty );
     }
-    sem_post( &shared.print );
-    pthread_exit( NULL );
 }
-
-void* final( void* ) {
-
-    sem_wait( &shared.print );
-    printf( "\nOperazioni concluse, arrivederci dal thread: %ld", pthread_self() );
-    sleep( 5 );
-    pthread_exit( NULL );
-}
-
 
 int main( int argc, char* argv[] ) {
 
-    // Primo controllo verifico i parametri in input
-    if ( argc != 3 ) {
-        printf( "\nusage: %s <filename> <#N>", argv[0] );
-        exit( EXIT_SUCCESS );
-    }
-
-    // Assegno il nome del file ed il valore ad N globale con cast
-    fileName = argv[1];
-    N = atoi( argv[2] );
-
-
-    // Verifico che N rispetti il valore
-    if ( N <= 10 || N > 15 ) {
-        printf( "\nInserisci 10 < N <= 15" );
-        exit( EXIT_SUCCESS );
-    }
-
-    // Apertura file
-    file = open( fileName, O_RDWR | O_CREAT | O_TRUNC, 0777 );
-    lettore = file;
-
-    // Controllo apetura file corretta
-    if ( file == -1 ) {
-        perror( "Errore apertura file" );
+    // Verifica parametri in input da riga di comando
+    if ( argc != 2 ) {
+        printf( "\nusage: %s <#N>", argv[0] );
         exit( EXIT_FAILURE );
     }
 
-    printf( "\nFile: %s\nN: %d -> Fibonacci: %d", fileName, N, fibonacci( N ) );
+    // Inizializzazione variabili globali
+    N = atoi( argv[1] );
+    glob = 0;
+
+    printf( "\nN: %d, glob: %d", N, glob );
 
     // Inizializzazione semafori
-    sem_init( &shared.full, 0, 0 );
-    sem_init( &shared.empty, 0, N );
-    sem_init( &shared.sem_CS, 0, 1 );
-    sem_init( &shared.print, 0, 0 );
+    sem_init( &shared.sem_CS, 0, 1 ); // binario
+    sem_init( &shared.full, 0, 0 ); // contatore
+    sem_init( &shared.empty, 0, N ); // contatore
 
-    // Thread
-    pthread_t write, read, last;
+    pthread_t producer, consumer;
 
-    // Creazione Thread
-    if ( pthread_create( &write, NULL, writer, NULL ) != 0 ) {
-        perror( "Errore nella creazione del thread scrittore" );
+    if ( pthread_create( &producer, NULL, produce, NULL ) != 0 ) {
+        perror( "Errore nella creazione del produttore" );
         exit( EXIT_FAILURE );
     }
-    if ( pthread_create( &read, NULL, reader, NULL ) != 0 ) {
-        perror( "Errore nella creazione del thread lettore" );
+    if ( pthread_create( &consumer, NULL, consume, NULL ) != 0 ) {
+        perror( "Errore nella creazione del consumatore" );
         exit( EXIT_FAILURE );
     }
-    if ( pthread_create( &last, NULL, final, NULL ) != 0 ) {
-        perror( "Errore nella creazione del thread finale" );
+    if ( pthread_join( producer, NULL ) != 0 ) {
+        perror( "Errore nella join del produttore" );
         exit( EXIT_FAILURE );
     }
-
-    // Attesa Thread
-    if ( pthread_join( write, NULL ) != 0 ) {
-        perror( "Errore nella join del thread scrittore" );
-        exit( EXIT_FAILURE );
-    }
-    if ( pthread_join( read, NULL ) != 0 ) {
-        perror( "Errore nella join del thread lettore" );
-        exit( EXIT_FAILURE );
-    }
-    if ( pthread_join( last, NULL ) != 0 ) {
-        perror( "Errore nella join del thread finale" );
+    if ( pthread_join( consumer, NULL ) != 0 ) {
+        perror( "Errore nella join del consumatore" );
         exit( EXIT_FAILURE );
     }
 
-    // Chiusura file
-    close( file );
+    // Deallocazione semafori
+    sem_destroy( &shared.sem_CS ); // binario
+    sem_destroy( &shared.full ); // contatore
+    sem_destroy( &shared.empty ); // contatore
 
     printf( "\n" );
     exit( EXIT_SUCCESS );
